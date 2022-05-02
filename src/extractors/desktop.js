@@ -66,17 +66,28 @@ exports.extractOrganicResults = ($) => {
                 productInfo.price = Number(priceMatch[1].replace(/,/g, ''));
             }
         }
-
+        let mainDescription = null;
+        let personalDescription = null;
+        if ($(el).find('[data-content-feature="1"]').children().length === 2) {
+            mainDescription = $(el).find('[data-content-feature="1"]').children().eq(1);
+            personalDescription = $(el).find('[data-content-feature="1"]').children().eq(0)
+                .text()
+                .trim();
+        } else {
+            mainDescription = $(el).find('[data-content-feature="1"]');
+        }
         const searchResult = {
             title: $(el).find('[data-header-feature="0"] h3').first().text(),
             url: $(el).find('[data-header-feature="0"] a').first().attr('href'),
             displayedUrl: $(el).find('cite').eq(0).text(),
-            ...extractDescriptionAndDate($(el).find('[data-content-feature="1"]').text()),
+            ...extractDescriptionAndDate(mainDescription.text()),
             emphasizedKeywords: $(el).find('.VwiC3b em, .VwiC3b b').map((_i, element) => $(element).text().trim()).toArray(),
             siteLinks,
             productInfo,
         };
-
+        if (personalDescription) {
+            searchResult.personalDescription = personalDescription;
+        }
         return searchResult;
     };
 
