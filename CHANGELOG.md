@@ -1,3 +1,6 @@
+2022-05-03
+- Added `personalInfo` to output containing `name`, `location`, `jobTitle`, `companyName`, `cleanDescription`. These are available mainly for LinkedIn results.
+
 2022-01-31
 - Implemented `csvFriendlyOutput` option
 - Handled missing `www.` on domains
