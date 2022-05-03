@@ -66,21 +66,22 @@ exports.extractOrganicResults = ($) => {
                 productInfo.price = Number(priceMatch[1].replace(/,/g, ''));
             }
         }
-        let mainDescription = null;
         let personalDescription = null;
+        let cleanDescription = null;
+
         if ($(el).find('[data-content-feature="1"]').children().length === 2) {
-            mainDescription = $(el).find('[data-content-feature="1"]').children().eq(1);
             personalDescription = $(el).find('[data-content-feature="1"]').children().eq(0)
                 .text()
                 .trim();
-        } else {
-            mainDescription = $(el).find('[data-content-feature="1"]');
+            cleanDescription = $(el).find('[data-content-feature="1"]').children().eq(1)
+                .text()
+                .trim();
         }
         const searchResult = {
             title: $(el).find('[data-header-feature="0"] h3').first().text(),
             url: $(el).find('[data-header-feature="0"] a').first().attr('href'),
             displayedUrl: $(el).find('cite').eq(0).text(),
-            ...extractDescriptionAndDate(mainDescription.text()),
+            ...extractDescriptionAndDate($(el).find('[data-content-feature="1"]').text()),
             emphasizedKeywords: $(el).find('.VwiC3b em, .VwiC3b b').map((_i, element) => $(element).text().trim()).toArray(),
             siteLinks,
             productInfo,
@@ -88,7 +89,7 @@ exports.extractOrganicResults = ($) => {
         if (personalDescription) {
             const [name] = searchResult.title.split('-').map((field) => field.trim());
             const [location, jobTitle, companyName] = personalDescription.split('·').map((field) => field.trim());
-            searchResult.personalInfo = { name, location, jobTitle, companyName };
+            searchResult.personalInfo = { name, location, jobTitle, companyName, cleanDescription };
         }
         return searchResult;
     };
