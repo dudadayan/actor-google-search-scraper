@@ -86,8 +86,9 @@ exports.extractOrganicResults = ($) => {
             productInfo,
         };
         if (personalDescription) {
-            [searchResult.name] = searchResult.title.split('-').map((field) => field.trim());
-            [searchResult.location, searchResult.jobTitle, searchResult.companyName] = personalDescription.split('·').map((field) => field.trim());
+            const [name] = searchResult.title.split('-').map((field) => field.trim());
+            const [location, jobTitle, companyName] = personalDescription.split('·').map((field) => field.trim());
+            searchResult.personalInfo = { name, location, jobTitle, companyName };
         }
         return searchResult;
     };
