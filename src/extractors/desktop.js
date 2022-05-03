@@ -86,7 +86,8 @@ exports.extractOrganicResults = ($) => {
             productInfo,
         };
         if (personalDescription) {
-            searchResult.personalDescription = personalDescription;
+            [searchResult.name] = searchResult.title.split('-').map((field) => field.trim());
+            [searchResult.location, searchResult.jobTitle, searchResult.companyName] = personalDescription.split('·').map((field) => field.trim());
         }
         return searchResult;
     };
