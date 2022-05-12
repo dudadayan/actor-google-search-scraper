@@ -756,5 +756,5 @@
           "prefill": "async ({ input, $, request, response, html }) => {\n  return {\n    pageTitle: $('title').text(),\n  };\n};"
       }
   },
-  "required": []
+  "required": ["queries"]
 }
