@@ -47,7 +47,10 @@ Apify.main(async () => {
         requestList,
         requestQueue,
         proxyConfiguration,
-        maxConcurrency,
+        autoscaledPoolOptions: {
+            maxConcurrency,
+            desiredConcurrency: 10
+        },
         preNavigationHooks: [async ({ request }) => {
             const parsedUrl = url.parse(request.url, true);
             request.userData.startedAt = new Date();
