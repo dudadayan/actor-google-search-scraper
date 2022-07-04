@@ -89,7 +89,7 @@ exports.extractOrganicResults = ($) => {
         if (personalDescription) {
             const [name] = searchResult.title.split('-').map((field) => field.trim());
             const [location, jobTitle, companyName] = personalDescription.split('·').map((field) => field.trim());
-            searchResult.personalInfo = { name, location, jobTitle, companyName, cleanDescription };
+            searchResult.personalInfo = { name, location, jobTitle, companyName, cleanDescription, rawText: personalDescription };
         }
         return searchResult;
     };
