@@ -78,7 +78,7 @@ exports.extractOrganicResults = ($, hostname) => {
                 });
 
             const productInfo = {};
-            const productInfoRatingText = $(el).find('.tP9Zud').text().trim(); // TODO fix
+            const productInfoRatingText = $(el).find('.MvDXgc').text().trim();
 
             // Using regexes here because I think it might be more stable than complicated selectors
             if (productInfoRatingText) {
@@ -89,7 +89,7 @@ exports.extractOrganicResults = ($, hostname) => {
                 }
             }
 
-            const productInfoPriceText = $(el).find('.xGipK').text().trim();
+            const productInfoPriceText = $(el).find('.jC6vSe').contents()[2]?.textContent?.trim();
             if (productInfoPriceText) {
                 productInfo.price = Number(productInfoPriceText.replace(/[^0-9.]/g, ''));
             }
@@ -317,7 +317,7 @@ exports.extractPaidResults = ($) => {
 exports.extractPaidProducts = ($) => {
     const products = [];
 
-    $('.shopping-carousel-container .pla-unit-container').each((_i, el) => {
+    $('.itG22d .pla-unit-container').each((_i, el) => {
         const headingEl = $(el).find('[role="heading"]');
         const siblingEls = headingEl.nextAll();
         const displayedUrlEl = siblingEls.last();
