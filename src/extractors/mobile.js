@@ -63,12 +63,12 @@ exports.extractOrganicResults = ($, hostname) => {
 
     if (layout === 'desktop-like') {
         // Not sure if #ires, .srg > div still works in some cases, left it there for now after I added the third selector (Lukas)
-        $('#ires, .srg > div, .mnr-c.xpd.O9g5cc.uUPGi').each((_index, el) => {
+        $('#ires, .srg > div, .Ww4FFb.n3YsHb.xpd.EtOod.pkphOe').each((_index, el) => {
             const siteLinks = [];
             const $el = $(el);
 
             $el
-                .find('[jsname].m8vZ3d a')
+                .find('[jsname].dJMePd a')
                 .each((_i, siteLinkEl) => {
                     siteLinks.push({
                         title: $(siteLinkEl).text(),
@@ -78,7 +78,7 @@ exports.extractOrganicResults = ($, hostname) => {
                 });
 
             const productInfo = {};
-            const productInfoRatingText = $(el).find('.tP9Zud').text().trim();
+            const productInfoRatingText = $(el).find('.MvDXgc').text().trim();
 
             // Using regexes here because I think it might be more stable than complicated selectors
             if (productInfoRatingText) {
@@ -89,7 +89,7 @@ exports.extractOrganicResults = ($, hostname) => {
                 }
             }
 
-            const productInfoPriceText = $(el).find('.xGipK').text().trim();
+            const productInfoPriceText = $(el).find('.jC6vSe').contents()[2]?.textContent?.trim();
             if (productInfoPriceText) {
                 productInfo.price = Number(productInfoPriceText.replace(/[^0-9.]/g, ''));
             }
@@ -317,7 +317,7 @@ exports.extractPaidResults = ($) => {
 exports.extractPaidProducts = ($) => {
     const products = [];
 
-    $('.shopping-carousel-container .pla-unit-container').each((_i, el) => {
+    $('.itG22d .pla-unit-container').each((_i, el) => {
         const headingEl = $(el).find('[role="heading"]');
         const siblingEls = headingEl.nextAll();
         const displayedUrlEl = siblingEls.last();
@@ -347,27 +347,24 @@ exports.extractRelatedQueries = ($, hostname) => {
 
     const layout = determineLayout($);
 
+    function processSelector(selector) {
+        $(selector).each((_index, el) => {
+            related.push({
+                title: $(el).text().trim(),
+                url: ensureItsAbsoluteUrl($(el).attr('href'), hostname),
+            });
+        });
+    }
+
     if (layout === 'desktop-like') {
-        $('#extrares').find('h2').nextAll('a').each((_index, el) => {
-            related.push({
-                title: $(el).text().trim(),
-                url: ensureItsAbsoluteUrl($(el).attr('href'), hostname),
-            });
-        });
-        // another type of related searches
-        $('#bres span a').each((_index, el) => {
-            related.push({
-                title: $(el).text().trim(),
-                url: ensureItsAbsoluteUrl($(el).attr('href'), hostname),
-            });
-        });
-        // another type of related searches
-        $('#brs p a').each((_index, el) => {
-            related.push({
-                title: $(el).text().trim(),
-                url: ensureItsAbsoluteUrl($(el).attr('href'), hostname),
-            });
-        });
+        // some previous selectors, unsure if they still match something on some pages
+        processSelector('#extrares h2 ~ a');
+        processSelector('#bres span a');
+        processSelector('#brs p a');
+        // carousel of boxes with images on first page of search
+        processSelector('.mR2gOd.Y3nRse .luHZgb .nZWEZc a');
+        // seems to match all lines [magnifying glass] <related query>, no matter if they're located under the top banner, or in the middle of a page
+        processSelector('a.iOJVmb');
     }
 
     if (layout === 'mobile') {
