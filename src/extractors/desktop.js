@@ -14,17 +14,18 @@ exports.extractOrganicResults = ($) => {
         const siteLinksSel2020 = '.St3GK a';
         const siteLinksSel2021January = 'table';
 
-        if ($(el).parent().parent().siblings(siteLinksSel2021January).length > 0) {
-            $(el).parent().parent().siblings(siteLinksSel2021January)
-                .find('td .sld')
-                .each((i, siteLinkEl) => {
-                    siteLinks.push({
-                        title: $(siteLinkEl).find('a').text(),
-                        url: $(siteLinkEl).find('a').attr('href'),
-                        ...extractDescriptionAndDate($(siteLinkEl).find('.s').text()),
-                    });
+        const tableElement = $(el).find(siteLinksSel2021January).eq(0);
+        tableElement
+            .find('td')
+            .each((i, siteLinkEl) => {
+                siteLinks.push({
+                    title: $(siteLinkEl).find('a').text(),
+                    url: $(siteLinkEl).find('a').attr('href'),
+                    ...extractDescriptionAndDate($(siteLinkEl).find('.zz3gNc').text()),
                 });
-        } else if ($(el).find(siteLinksSel2020).length > 0) {
+            });
+
+        if (siteLinks.length === 0 && $(el).find(siteLinksSel2020).length > 0) {
             $(el).find(siteLinksSel2020).each((i, siteLinkEl) => {
                 siteLinks.push({
                     title: $(siteLinkEl).text(),
@@ -37,7 +38,7 @@ exports.extractOrganicResults = ($) => {
                         .join(' ') || null),
                 });
             });
-        } else if ($(el).find(siteLinksSelOld).length > 0) {
+        } else if (siteLinks.length === 0 && $(el).find(siteLinksSelOld).length > 0) {
             $(el).find(siteLinksSelOld).each((_i, siteLinkEl) => {
                 siteLinks.push({
                     title: $(siteLinkEl).find('h3').text(),
@@ -66,26 +67,30 @@ exports.extractOrganicResults = ($) => {
                 productInfo.price = Number(priceMatch[1].replace(/,/g, ''));
             }
         }
-        let personalDescription = null;
-        let cleanDescription = null;
 
-        if ($(el).find('[data-content-feature="1"]').children().length === 2) {
-            personalDescription = $(el).find('[data-content-feature="1"]').children().eq(0)
-                .text()
-                .trim();
-            cleanDescription = $(el).find('[data-content-feature="1"]').children().eq(1)
-                .text()
-                .trim();
-        }
+        const descriptionSelector = '.VwiC3b span';
+
         const searchResult = {
-            title: $(el).find('[data-header-feature="0"] h3').first().text(),
-            url: $(el).find('[data-header-feature="0"] a').first().attr('href'),
+            title: $(el).find('h3').first().text(),
+            url: $(el).find('a').first().attr('href'),
             displayedUrl: $(el).find('cite').eq(0).text(),
-            ...extractDescriptionAndDate($(el).find('[data-content-feature="1"]').text()),
+            ...extractDescriptionAndDate($(el).find(descriptionSelector).text()),
             emphasizedKeywords: $(el).find('.VwiC3b em, .VwiC3b b').map((_i, element) => $(element).text().trim()).toArray(),
             siteLinks,
             productInfo,
         };
+
+        let personalDescription = null;
+        let cleanDescription = null;
+
+        if ($(el).find(descriptionSelector).children().length === 2) {
+            personalDescription = $(el).find(descriptionSelector).children().eq(0)
+                .text()
+                .trim();
+            cleanDescription = $(el).find(descriptionSelector).children().eq(1)
+                .text()
+                .trim();
+        }
         if (personalDescription) {
             const [name] = searchResult.title.split('-').map((field) => field.trim());
             const [location, jobTitle, companyName] = personalDescription.split('·').map((field) => field.trim());
@@ -94,29 +99,44 @@ exports.extractOrganicResults = ($) => {
         return searchResult;
     };
 
-    // TODO: If you figure out how to reasonably generalize this, you get a medal
+    // .g is a general selector for each search result group but it also contain lot of extra stuff
+    // we don't parse or parse separately
+    // The main trick is to find accompanying selector that will extra just the classical search results
+    // but it is tricky and Google likes to change that and add more and more new designs (e.g. special design for Twitter pages)
+
+    // TODO: I think going forward, the best way will probably be to iterate the .g results
+    // and try to regoznize what type of result it is and then assigg to the result
+
     const resultSelectorOld = '.g .rc';
     // We go one deeper to gain accuracy but then we have to go one up for the parsing
     const resultSelector2021January = '.g .tF2Cxc>.yuRUbf';
     const resultSelector2022January = '.g [data-header-feature="0"]';
 
+    // Top result with site links. This result doesn't fit into the above selectors
+    const topResult2022August = '.g[data-hveid] .Uo8X3b';
+
+    // Twitter has special layout with big boxes.
+    // TODO: We don't parse the boxes yet
+    const twitterResults2022August = '.g.eejeod';
+
+    const followupResults2022 = `${resultSelector2022January}, ${twitterResults2022August}`;
+
     let searchResults = [];
-    if ($(`${resultSelector2022January}`).length > 0) {
-        searchResults = [...$(`${resultSelector2022January}`)].reduce((organicResultsSels, organicResultSel) => {
-            // We  fetch the list of sub organic results contained in one organic result section
-            // It may be hijacking the siteLinks and flattening them into the organicResultsSels
-            const subOrganicResultsSels = $(organicResultSel).map((_i, organicItem) => parseResult($(organicItem).parent())).toArray();
-            organicResultsSels.push(...subOrganicResultsSels);
-            return organicResultsSels;
-        }, []);
+    searchResults.push(...$(topResult2022August).map((_i, el) => parseResult($(el).parent())).toArray());
+
+    // We do one extra loop to fetch the list of sub organic results contained in one organic result section
+    // It may be hijacking the siteLinks and flattening them
+    for (const resultEl of $(followupResults2022)) {
+        searchResults.push(...$(resultEl).map((_i, el) => parseResult($(el).parent())).toArray());
+    }
+
+    // These are only as fallback ans we will them only if previous layouts are empty
+    if (searchResults.length === 0) {
+        searchResults = $(resultSelector2021January).map((_i, el) => parseResult($(el).parent())).toArray();
     }
 
     if (searchResults.length === 0) {
-        searchResults = $(`${resultSelector2021January}`).map((_i, el) => parseResult($(el).parent())).toArray();
-    }
-
-    if (searchResults.length === 0) {
-        searchResults = $(`${resultSelectorOld}`).map((_index, el) => parseResult(el)).toArray();
+        searchResults = $(resultSelectorOld).map((_index, el) => parseResult(el)).toArray();
     }
 
     return searchResults;
