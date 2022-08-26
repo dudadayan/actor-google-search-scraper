@@ -1,3 +1,6 @@
+2022-08-24
+- Fixed organic results sometimes missing top result and twitter based results
+
 2022-05-03
 - Added `personalInfo` to output containing `name`, `location`, `jobTitle`, `companyName`, `cleanDescription`. These are available mainly for LinkedIn results.
 

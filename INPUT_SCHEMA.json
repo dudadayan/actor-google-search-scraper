@@ -740,7 +740,7 @@
           "title": "Save HTML to key-value store",
           "type": "boolean",
           "description": "If checked, the HTML of the Google Search results pages will be stored to the default key-value store and links to the files stored to the dataset under the <code>htmlSnapshotUrl</code> property. This is useful for debugging, since you can easily view the the pages in browser, but use of this feature has some performance penalty.",
-          "default": false
+          "default": true
       },
       "includeUnfilteredResults": {
           "title": "Include unfiltered results",

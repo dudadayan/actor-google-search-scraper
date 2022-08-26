@@ -279,6 +279,7 @@ When using a tabular format such as `csv` or `xls`, you'll get a table where eac
 ## Tips and tricks
 * Crawling the second and subsequent results pages might be slower than the first page.
 * If you need to scrape a lot of results for a single query, you can greatly improve the speed of the crawl by setting **Results per page** (`resultsPerPage`) to 100, so that you get 100 results per page instead of crawling 10 pages, each with 10 results.
+* If you are not sure that the results are complete and of good quality, each run stores the full HTML page to the default Key-Value Store. You can view it by clicking on it and compare the results. Our team is constantly monitoring the quality but we are happy for any reports.
 
 ## Personal data
 You should be aware that search results can contain personal data. Personal data is protected by GDPR in the European Union and by other regulations around the world. You should not scrape personal data unless you have a legitimate reason to do so. If you're unsure whether your reason is legitimate, consult your lawyers. You can also read our blog post on the [legality of web scraping](https://blog.apify.com/is-web-scraping-legal/).
