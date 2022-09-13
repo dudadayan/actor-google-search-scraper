@@ -71,16 +71,18 @@ exports.extractOrganicResults = ($) => {
         const descriptionSelector = '.VwiC3b span';
 
         const ping = $(el).find('a').first().attr('ping');
-        const params = new Proxy(new URLSearchParams(ping), {
-            get: (searchParams, prop) => searchParams.get(prop),
-        });
+        const pingved2 = $(el).find('a[ping]').attr('ping');
+        // const params = new Proxy(new URLSearchParams(ping), {
+        //     get: (searchParams, prop) => searchParams.get(prop),
+        // });
         const searchResult = {
             title: $(el).find('h3').first().text(),
             url: $(el).find('a').first().attr('href'),
             displayedUrl: $(el).find('cite').eq(0).text(),
             ...extractDescriptionAndDate($(el).find(descriptionSelector).text()),
             emphasizedKeywords: $(el).find('.VwiC3b em, .VwiC3b b').map((_i, element) => $(element).text().trim()).toArray(),
-            pingVed: params.ved,
+            pingVed: ping,
+            pingVed2: pingved2,
             itemVed: $(el).closest('div[data-ved]').attr('data-ved'),
             lang: $(el).parents('div[lang]').attr('lang'),
             siteLinks,
