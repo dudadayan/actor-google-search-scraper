@@ -1,6 +1,7 @@
 # First, specify the base Docker image. You can read more about
 # the available images at https://sdk.apify.com/docs/guides/docker-images
 # You can also use any other image from Docker Hub.
+RUN echo "Build My version: 1.0.2"
 FROM apify/actor-node:16
 
 # Second, copy just package.json and package-lock.json since it should be
@@ -17,8 +18,7 @@ RUN npm --quiet set progress=false \
  && echo "Node.js version:" \
  && node --version \
  && echo "NPM version:" \
- && npm --version \
-&& echo "My version: 1.0.2"
+ && npm --version
 
 # Next, copy the remaining files and directories with the source code.
 # Since we do this after NPM install, quick build will be really fast
