@@ -94,7 +94,7 @@ exports.extractOrganicResults = ($, hostname) => {
                 productInfo.price = Number(productInfoPriceText.replace(/[^0-9.]/g, ''));
             }
 
-            const ping = $el.attr('ping');
+            const ping = $(el).closest('a[ping]').attr('ping');
             const params = new Proxy(new URLSearchParams(ping), {
                 get: (searchParams, prop) => searchParams.get(prop),
             });
@@ -145,7 +145,7 @@ exports.extractOrganicResults = ($, hostname) => {
                     .remove()
                     .end();
 
-                const ping = $el.attr('ping');
+                const ping = $(el).closest('a[ping]').attr('ping');
                 const params = new Proxy(new URLSearchParams(ping), {
                     get: (searchParams, prop) => searchParams.get(prop),
                 });
