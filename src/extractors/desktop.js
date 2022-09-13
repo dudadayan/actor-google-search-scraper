@@ -70,7 +70,7 @@ exports.extractOrganicResults = ($) => {
 
         const descriptionSelector = '.VwiC3b span';
 
-        const ping = $(el).closest('a[ping]').attr('ping');
+        const ping = $(el).find('a').first().attr('ping');
         const params = new Proxy(new URLSearchParams(ping), {
             get: (searchParams, prop) => searchParams.get(prop),
         });

@@ -18,7 +18,7 @@ RUN npm --quiet set progress=false \
  && node --version \
  && echo "NPM version:" \
  && npm --version \
-&& echo "My version: 1.0.1"
+&& echo "My version: 1.0.2"
 
 # Next, copy the remaining files and directories with the source code.
 # Since we do this after NPM install, quick build will be really fast
