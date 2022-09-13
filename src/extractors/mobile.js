@@ -94,12 +94,19 @@ exports.extractOrganicResults = ($, hostname) => {
                 productInfo.price = Number(productInfoPriceText.replace(/[^0-9.]/g, ''));
             }
 
+            const ping = $el.attr('ping');
+            const params = new Proxy(new URLSearchParams(ping), {
+                get: (searchParams, prop) => searchParams.get(prop),
+            });
             searchResults.push({
                 title: $el.find('a div[role="heading"]').text(),
                 url: $el.find('a').first().attr('href'),
                 displayedUrl: $el.find('span.qzEoUe').first().text(),
                 ...extractDescriptionAndDate($el.find('div.yDYNvb').text()),
                 emphasizedKeywords: $el.find('div.yDYNvb').find('em, b').map((_i, element) => $(element).text().trim()).toArray(),
+                pingVed: params.ved,
+                itemVed: $el.closest('div[data-ved]').attr('data-ved'),
+                lang: $el.parents('div[lang]').attr('lang'),
                 siteLinks,
                 productInfo,
             });
@@ -138,12 +145,19 @@ exports.extractOrganicResults = ($, hostname) => {
                     .remove()
                     .end();
 
+                const ping = $el.attr('ping');
+                const params = new Proxy(new URLSearchParams(ping), {
+                    get: (searchParams, prop) => searchParams.get(prop),
+                });
                 searchResults.push({
                     title: $el.find('a > h3').eq(0).text().trim(),
                     url: getUrlFromParameter($el.find('a').first().attr('href'), hostname),
                     displayedUrl: $el.find('a > div').eq(0).text().trim(),
                     ...extractDescriptionAndDate($description.text().replace(/ · /g, '').trim()),
                     emphasizedKeywords: $description.find('em, b').map((_i, element) => $(element).text().trim()).toArray(),
+                    pingVed: params.ved,
+                    itemVed: $el.closest('div[data-ved]').attr('data-ved'),
+                    lang: $el.parents('div[lang]').attr('lang'),
                     siteLinks,
                 });
             });
